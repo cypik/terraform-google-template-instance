@@ -28,12 +28,6 @@ variable "repository" {
   description = "Terraform current module repo"
 }
 
-variable "project_id" {
-  type        = string
-  description = "The GCP project ID"
-  default     = null
-}
-
 variable "machine_type" {
   description = "Machine type to create, e.g. n1-standard-1"
   type        = string
@@ -306,12 +300,6 @@ variable "static_ips" {
   type        = list(string)
   description = "List of static IPs for VM instances"
   default     = []
-}
-
-variable "num_instances" {
-  description = "Number of instances to create. This value is ignored if static_ips is provided."
-  type        = number
-  default     = 1
 }
 
 variable "instance_template" {

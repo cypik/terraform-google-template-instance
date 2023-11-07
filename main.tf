@@ -1,5 +1,5 @@
 module "labels" {
-  source      = "git::git@github.com:opz0/terraform-gcp-labels.git?ref=master"
+  source      = "git::https://github.com/opz0/terraform-gcp-labels.git?ref=v1.0.0"
   name        = var.name
   environment = var.environment
   label_order = var.label_order
@@ -7,7 +7,9 @@ module "labels" {
   repository  = var.repository
 }
 
-###########################################
+data "google_client_config" "current" {
+}
+
 locals {
   source_image         = var.source_image != "" ? var.source_image : "ubuntu-2204-jammy-v20230908"
   source_image_family  = var.source_image_family != "" ? var.source_image_family : "ubuntu-2204-lts"
@@ -45,7 +47,7 @@ locals {
 resource "google_compute_instance_template" "tpl" {
   count                   = var.instance_template ? 1 : 0
   name_prefix             = format("%s-%s", module.labels.id, (count.index))
-  project                 = var.project_id
+  project                 = data.google_client_config.current.project
   machine_type            = var.machine_type
   labels                  = var.labels
   metadata                = var.metadata
@@ -78,7 +80,6 @@ resource "google_compute_instance_template" "tpl" {
       }
     }
   }
-
 
   dynamic "service_account" {
     for_each = var.service_account == null ? [] : [var.service_account]
@@ -147,8 +148,6 @@ resource "google_compute_instance_template" "tpl" {
     preemptible         = var.preemptible
     automatic_restart   = local.automatic_restart
     on_host_maintenance = local.on_host_maintenance
-
-
   }
 
   advanced_machine_features {
@@ -178,34 +177,26 @@ resource "google_compute_instance_template" "tpl" {
   }
 }
 locals {
-  num_instances = length(var.static_ips) == 0 ? var.num_instances : length(var.static_ips)
-
   static_ips        = concat(var.static_ips, ["NOT_AN_IP"])
-  project_id        = length(regexall("/projects/([^/]*)", var.instance_template)) > 0 ? flatten(regexall("/projects/([^/]*)", var.instance_template))[0] : null
   network_interface = length(format("%s%s", var.network, var.subnetwork)) == 0 ? [] : [1]
 }
 
-###############
-# Data Sources
-###############
-
 data "google_compute_zones" "available" {
-  project = local.project_id
+  project = data.google_client_config.current.project
   region  = var.region
 }
+
 #####==============================================================================
 ##### Manages a VM instance resource within GCE.
 #####==============================================================================
-
 resource "google_compute_instance_from_template" "compute_instance" {
   provider            = google
   count               = var.instance_from_template ? 1 : 0
   name                = format("%s-%s", module.labels.id, (count.index))
-  project             = local.project_id
+  project             = data.google_client_config.current.project
   zone                = var.zone == null ? data.google_compute_zones.available.names[count.index % length(data.google_compute_zones.available.names)] : var.zone
   deletion_protection = var.deletion_protection
   resource_policies   = var.resource_policies
-
 
   dynamic "network_interface" {
     for_each = local.network_interface
@@ -219,7 +210,6 @@ resource "google_compute_instance_from_template" "compute_instance" {
       access_config {
         // Ephemeral public IP
         nat_ip = var.nat_ip
-
       }
 
       dynamic "ipv6_access_config" {
@@ -242,6 +232,5 @@ resource "google_compute_instance_from_template" "compute_instance" {
     email  = var.service_account_email
     scopes = var.service_account_scopes
   }
-
   source_instance_template = var.source_instance_template
 }
