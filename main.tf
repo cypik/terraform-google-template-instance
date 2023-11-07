@@ -81,7 +81,6 @@ resource "google_compute_instance_template" "tpl" {
     }
   }
 
-
   dynamic "service_account" {
     for_each = var.service_account == null ? [] : [var.service_account]
     content {
@@ -149,8 +148,6 @@ resource "google_compute_instance_template" "tpl" {
     preemptible         = var.preemptible
     automatic_restart   = local.automatic_restart
     on_host_maintenance = local.on_host_maintenance
-
-
   }
 
   advanced_machine_features {
@@ -180,25 +177,18 @@ resource "google_compute_instance_template" "tpl" {
   }
 }
 locals {
-  num_instances = length(var.static_ips) == 0 ? var.num_instances : length(var.static_ips)
-
   static_ips        = concat(var.static_ips, ["NOT_AN_IP"])
-  project_id        = length(regexall("/projects/([^/]*)", var.instance_template)) > 0 ? flatten(regexall("/projects/([^/]*)", var.instance_template))[0] : null
   network_interface = length(format("%s%s", var.network, var.subnetwork)) == 0 ? [] : [1]
 }
-
-###############
-# Data Sources
-###############
 
 data "google_compute_zones" "available" {
   project = data.google_client_config.current.project
   region  = var.region
 }
+
 #####==============================================================================
 ##### Manages a VM instance resource within GCE.
 #####==============================================================================
-
 resource "google_compute_instance_from_template" "compute_instance" {
   provider            = google
   count               = var.instance_from_template ? 1 : 0
@@ -207,7 +197,6 @@ resource "google_compute_instance_from_template" "compute_instance" {
   zone                = var.zone == null ? data.google_compute_zones.available.names[count.index % length(data.google_compute_zones.available.names)] : var.zone
   deletion_protection = var.deletion_protection
   resource_policies   = var.resource_policies
-
 
   dynamic "network_interface" {
     for_each = local.network_interface
@@ -221,7 +210,6 @@ resource "google_compute_instance_from_template" "compute_instance" {
       access_config {
         // Ephemeral public IP
         nat_ip = var.nat_ip
-
       }
 
       dynamic "ipv6_access_config" {
@@ -244,6 +232,5 @@ resource "google_compute_instance_from_template" "compute_instance" {
     email  = var.service_account_email
     scopes = var.service_account_scopes
   }
-
   source_instance_template = var.source_instance_template
 }

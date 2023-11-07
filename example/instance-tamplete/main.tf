@@ -75,7 +75,6 @@ module "compute_instance" {
   region                 = "asia-northeast1"
   zone                   = "asia-northeast1-a"
   subnetwork             = module.subnet.subnet_id
-  num_instances          = 1
   instance_from_template = true
   deletion_protection    = false
   service_account        = null
