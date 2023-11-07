@@ -1,7 +1,7 @@
-
 output "self_link" {
   value = module.compute_instance.self_link
 }
+
 output "instances_self_links" {
   description = "List of self-links for compute instances"
   value       = module.compute_instance.instances_self_links

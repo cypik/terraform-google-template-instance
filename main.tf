@@ -1,5 +1,5 @@
 module "labels" {
-  source      = "git::git@github.com:opz0/terraform-gcp-labels.git?ref=master"
+  source      = "git::https://github.com/opz0/terraform-gcp-labels.git?ref=v1.0.0"
   name        = var.name
   environment = var.environment
   label_order = var.label_order
@@ -7,7 +7,9 @@ module "labels" {
   repository  = var.repository
 }
 
-###########################################
+data "google_client_config" "current" {
+}
+
 locals {
   source_image         = var.source_image != "" ? var.source_image : "ubuntu-2204-jammy-v20230908"
   source_image_family  = var.source_image_family != "" ? var.source_image_family : "ubuntu-2204-lts"
@@ -45,7 +47,7 @@ locals {
 resource "google_compute_instance_template" "tpl" {
   count                   = var.instance_template ? 1 : 0
   name_prefix             = format("%s-%s", module.labels.id, (count.index))
-  project                 = var.project_id
+  project                 = data.google_client_config.current.project
   machine_type            = var.machine_type
   labels                  = var.labels
   metadata                = var.metadata
@@ -190,7 +192,7 @@ locals {
 ###############
 
 data "google_compute_zones" "available" {
-  project = local.project_id
+  project = data.google_client_config.current.project
   region  = var.region
 }
 #####==============================================================================
@@ -201,7 +203,7 @@ resource "google_compute_instance_from_template" "compute_instance" {
   provider            = google
   count               = var.instance_from_template ? 1 : 0
   name                = format("%s-%s", module.labels.id, (count.index))
-  project             = local.project_id
+  project             = data.google_client_config.current.project
   zone                = var.zone == null ? data.google_compute_zones.available.names[count.index % length(data.google_compute_zones.available.names)] : var.zone
   deletion_protection = var.deletion_protection
   resource_policies   = var.resource_policies

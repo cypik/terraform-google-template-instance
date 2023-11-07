@@ -1,5 +1,5 @@
 # terraform-gcp-template-instance
-# Terraform-gcp-Template-Instance
+# Google Cloud Infrastructure Provisioning with Terraform
 
 ## Table of Contents
 
@@ -13,87 +13,82 @@
 
 ## Introduction
 
-This Terraform module provides infrastructure configuration for creating a Virtual Private Cloud (VPC) in Google Cloud Platform (GCP) along with subnets, firewall rules, and compute instances. It's designed to be used for managing network resources in a GCP environment.
+This Terraform module provides infrastructure configuration for creating a template-instance in Google Cloud Platform (GCP) along with vpc subnets, firewall rules . It's designed to be used for managing network resources in a GCP environment.
 
 
 ## Usage
 
-To use this module, include it in your Terraform configuration. Below is an example of how to call the VPC module and its dependencies.
+To use this module, include it in your Terraform configuration. Below is an example of how to call the template-instance module and its dependencies.
+### Examples
 
-- # complete-instance-from-template
+## Example: instance-from-existing-template
 ```hcl
 data "google_compute_instance_template" "generic" {
   name = "template-test-020230919082713685100000001"
 }
 
 module "compute_instance" {
-  source                   = "git::git@github.com:opz0/terraform-gcp-template-instance.git?ref=master"
-  name                     = "instance"
-  environment              = "test"
-  region                   = "asia-northeast1"
-  project_id               = "opz0-397319"
-  zone                     = "asia-northeast1-a"
-  subnetwork               = module.subnet.subnet_id
-  num_instances            = 1
-  source_instance_template = data.google_compute_instance_template.generic.self_link
-  deletion_protection      = false
-  service_account          = null
+  source                 = "git::https://github.com/opz0/terraform-gcp-template-instance.git?ref=v1.0.0"
+  name                   = "instance"
+  environment            = "test"
+  region                 = "asia-northeast1"
+  zone                   = "asia-northeast1-a"
+  subnetwork             = module.subnet.subnet_id
+  num_instances          = 1
+  instance_from_template = true
+  deletion_protection    = false
+  service_account        = null
 
-  access_config = [
-    {
-      nat_ip       = ""
-      network_tier = ""
-    }
-  ]
+  access_config = [{
+    nat_ip       = ""
+    network_tier = ""
+  }, ]
+  source_instance_template = data.google_compute_instance_template.generic.self_link
 }
 ```
 
-- # instance-template
+## Example: instance-with-template
 ```hcl
 # Instance Template module call
 module "instance_template" {
-  source = "git::git@github.com:opz0/terraform-gcp-template-instance.git?ref=master"
-  instance_template = true
-  name = "template"
-  environment = "test"
-  region = "asia-northeast1"
-  project_id = "opz0-397319"
-  source_image = "ubuntu-2204-jammy-v20230908"
-  source_image_family = "ubuntu-2204-lts"
+  source               = "git::https://github.com/opz0/terraform-gcp-template-instance.git?ref=v1.0.0"
+  name                 = "template"
+  environment          = "test"
+  region               = "asia-northeast1"
+  source_image         = "ubuntu-2204-jammy-v20230908"
+  source_image_family  = "ubuntu-2204-lts"
   source_image_project = "ubuntu-os-cloud"
-  subnetwork = module.subnet.subnet_id
-  service_account = null
+  subnetwork           = module.subnet.subnet_id
+  instance_template    = true
+  service_account      = null
   metadata = {
     ssh-keys = <<EOF
-      dev:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCnRpyyDQHM2KPJ+j/FmgC27u/ohglMoWsJLsXSqfms5fWTW7YOm6WU89HlyWIJkQRPx4pIxpGFvDZwrFu0u3uTKLDtlfjs7KG5pH7q2RzIDq7spvrLJZ5VX2hJxveP9+L6ihYrPhcx5/0YqTB2cIkD1/R0qwnOWlNBUpDL9/GcLH54hjJLjPcMLfVfJwAa9IZ8jDGbMbFYLRazk78WCaYVe3BIBzFpyhwYcLL4YVolO6l450rsARENBq7ObXrP3AW1O/+I3fLaKGVZB7VXA7I0rj3MKU4qzD5L6tZLn5Lq3aUPcerhDgsiCY0X4nSJygxYX2Lxc3YKmJ/1PvrR9eJJ585qkRE25Z7URiICm45kFVfqf5Wn56PxzA+nOlPpV2QeNspI/6wih87hbyvUsE0y1fyds3kD9zVWQNzLd2BW4QZ/ZoaYRVY365S8LEqGxUVRbuyzni+51lj99yDW8X8W/zKU+lCBaggRjlkx4Q3NWS1gefgv3k/3mwt2y+PDQMU= suresh@suresh
-
+      dev:ssh-rsa AAAAB3NzaC1yc2EAA/3mwt2y+PDQMU= suresh@suresh
     EOF
   }
 }
 
-# Compute Instance module call
+# compute-instance
 module "compute_instance" {
-  source = "git::git@github.com:opz0/terraform-gcp-template-instance.git?ref=master"
+  source                 = "git::https://github.com/opz0/terraform-gcp-template-instance.git?ref=v1.0.0"
+  name                   = "instance"
+  environment            = "test"
+  region                 = "asia-northeast1"
+  zone                   = "asia-northeast1-a"
+  subnetwork             = module.subnet.subnet_id
+  num_instances          = 1
   instance_from_template = true
-  name = "instance"
-  environment = "test"
-  project_id = "opz0-397319"
-  region = "asia-northeast1"
-  zone = "asia-northeast1-a"
-  subnetwork = module.subnet.subnet_id
-  num_instances = "1"
-  source_instance_template = module.instance_template.self_link_unique
-  deletion_protection = false
-  service_account = null
+  deletion_protection    = false
+  service_account        = null
 
-  access_config = [
-    {
-      nat_ip = ""
-      network_tier = ""
-    },
-  ]
+  access_config = [{
+    nat_ip       = ""
+    network_tier = ""
+  }, ]
+  source_instance_template = module.instance_template.self_link_unique
 }
 ```
+This example demonstrates how to create various GCP resources using the provided modules. Adjust the input values to suit your specific requirements.
 
 ## Module Inputs
 
