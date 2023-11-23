@@ -28,7 +28,7 @@ data "google_compute_instance_template" "generic" {
 }
 
 module "compute_instance" {
-  source                 = "git::https://github.com/opz0/terraform-gcp-template-instance.git?ref=v1.0.0"
+  source                 = "git::https://github.com/cypik/terraform-gcp-template-instance.git?ref=v1.0.0"
   name                   = "instance"
   environment            = "test"
   region                 = "asia-northeast1"
@@ -38,19 +38,16 @@ module "compute_instance" {
   deletion_protection    = false
   service_account        = null
 
-  access_config = [{
-    nat_ip       = ""
-    network_tier = ""
-  }, ]
+  ## public IP if enable_public_ip is true
+  enable_public_ip         = true
   source_instance_template = data.google_compute_instance_template.generic.self_link
 }
 ```
 
 ## Example: instance-with-template
 ```hcl
-# Instance Template module call
 module "instance_template" {
-  source               = "git::https://github.com/opz0/terraform-gcp-template-instance.git?ref=v1.0.0"
+  source               = "git::https://github.com/cypik/terraform-gcp-template-instance.git?ref=v1.0.0"
   name                 = "template"
   environment          = "test"
   region               = "asia-northeast1"
@@ -69,7 +66,7 @@ module "instance_template" {
 
 # compute-instance
 module "compute_instance" {
-  source                 = "git::https://github.com/opz0/terraform-gcp-template-instance.git?ref=v1.0.0"
+  source                 = "git::https://github.com/cypik/terraform-gcp-template-instance.git?ref=v1.0.0"
   name                   = "instance"
   environment            = "test"
   region                 = "asia-northeast1"
@@ -79,10 +76,8 @@ module "compute_instance" {
   deletion_protection    = false
   service_account        = null
 
-  access_config = [{
-    nat_ip       = ""
-    network_tier = ""
-  }, ]
+  ## public IP if enable_public_ip is true
+  enable_public_ip         = true
   source_instance_template = module.instance_template.self_link_unique
 }
 ```
@@ -126,10 +121,10 @@ This module provides the following outputs:
 - `compute_instance_id`: The ID of the created compute instance.
 
 ## Examples
-For detailed examples on how to use this module, please refer to the 'examples' directory within this repository.
+For detailed examples on how to use this module, please refer to the [examples](https://github.com/cypik/terraform-gcp-template-instance/blob/master/example) directory within this repository.
 
 ## License
-This Terraform module is provided under the '[License Name]' License. Please see the [LICENSE](https://github.com/opz0/terraform-gcp-template-instance/blob/master/LICENSE) file for more details.
+This Terraform module is provided under the '[License Name]' License. Please see the [LICENSE](https://github.com/cypik/terraform-gcp-template-instance/blob/master/LICENSE) file for more details.
 
 ## Author
 Your Name

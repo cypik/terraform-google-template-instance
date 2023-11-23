@@ -19,12 +19,12 @@ variable "label_order" {
 variable "managedby" {
   type        = string
   default     = ""
-  description = "ManagedBy, eg 'Opz0'."
+  description = "ManagedBy, eg 'cypik'."
 }
 
 variable "repository" {
   type        = string
-  default     = ""
+  default     = "https://github.com/cypik/terraform-gcp-template-instance"
   description = "Terraform current module repo"
 }
 
@@ -86,12 +86,6 @@ variable "enable_nested_virtualization" {
   type        = bool
   description = "Defines whether the instance should have nested virtualization enabled."
   default     = false
-}
-
-variable "nat_ip" {
-  description = "Public ip address"
-  type        = bool
-  default     = null
 }
 
 variable "threads_per_core" {
@@ -357,4 +351,9 @@ variable "instance_from_template" {
   type        = bool
   default     = false
   description = ""
+}
+variable "enable_public_ip" {
+  description = "Predefined enable_public_ip  address for the instance."
+  type        = bool
+  default     = false
 }
