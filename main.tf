@@ -96,10 +96,9 @@ resource "google_compute_instance_template" "tpl" {
     network_ip         = length(var.network_ip) > 0 ? var.network_ip : null
     stack_type         = var.stack_type
     dynamic "access_config" {
-      for_each = var.access_config
+      for_each = var.enable_public_ip ? [1] : []
       content {
-        nat_ip       = access_config.value.nat_ip
-        network_tier = access_config.value.network_tier
+        # Add access_config settings here if needed
       }
     }
     dynamic "ipv6_access_config" {
@@ -212,7 +211,6 @@ resource "google_compute_instance_from_template" "compute_instance" {
           # Add access_config settings here if needed
         }
       }
-
       dynamic "ipv6_access_config" {
         for_each = var.ipv6_access_config
         content {

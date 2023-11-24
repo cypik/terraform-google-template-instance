@@ -80,7 +80,7 @@ module "compute_instance" {
   deletion_protection    = false
   service_account        = null
 
-  #  ## public IP if enable_public_ip is true
-  #  enable_public_ip         = false
+  ## public IP if enable_public_ip is true
+  enable_public_ip         = true
   source_instance_template = module.instance_template.self_link_unique
 }
