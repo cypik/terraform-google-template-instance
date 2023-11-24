@@ -1,5 +1,5 @@
 module "labels" {
-  source      = "git::https://github.com/opz0/terraform-gcp-labels.git?ref=v1.0.0"
+  source      = "git::https://github.com/cypik/terraform-gcp-labels.git?ref=v1.0.0"
   name        = var.name
   environment = var.environment
   label_order = var.label_order
@@ -207,9 +207,11 @@ resource "google_compute_instance_from_template" "compute_instance" {
       subnetwork_project = var.subnetwork_project
       network_ip         = length(var.static_ips) == 0 ? "" : element(local.static_ips, count.index)
 
-      access_config {
-        // Ephemeral public IP
-        nat_ip = var.nat_ip
+      dynamic "access_config" {
+        for_each = var.enable_public_ip ? [1] : []
+        content {
+          # Add access_config settings here if needed
+        }
       }
 
       dynamic "ipv6_access_config" {
