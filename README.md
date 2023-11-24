@@ -57,6 +57,8 @@ module "instance_template" {
   subnetwork           = module.subnet.subnet_id
   instance_template    = true
   service_account      = null
+  ## public IP if enable_public_ip is true
+  enable_public_ip     = true
   metadata = {
     ssh-keys = <<EOF
       dev:ssh-rsa AAAAB3NzaC1yc2EAA/3mwt2y+PDQMU= suresh@suresh
