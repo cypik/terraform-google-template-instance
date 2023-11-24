@@ -125,10 +125,9 @@ resource "google_compute_instance_template" "tpl" {
       subnetwork_project = network_interface.value.subnetwork_project
       network_ip         = length(network_interface.value.network_ip) > 0 ? network_interface.value.network_ip : null
       dynamic "access_config" {
-        for_each = network_interface.value.access_config
+        for_each = var.enable_public_ip ? [1] : []
         content {
-          nat_ip       = access_config.value.nat_ip
-          network_tier = access_config.value.network_tier
+          # Add access_config settings here if needed
         }
       }
       dynamic "ipv6_access_config" {
