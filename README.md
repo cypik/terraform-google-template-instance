@@ -1,4 +1,4 @@
-# terraform-gcp-template-instance
+# Terraform-gcp-template-instance
 # Google Cloud Infrastructure Provisioning with Terraform
 
 ## Table of Contents
@@ -13,7 +13,7 @@
 
 ## Introduction
 
-This Terraform module provides infrastructure configuration for creating a template-instance in Google Cloud Platform (GCP) along with vpc subnets, firewall rules . It's designed to be used for managing network resources in a GCP environment.
+This Terraform module provides infrastructure configuration for creating a **template-instance** in Google Cloud Platform (GCP) along with vpc subnets, firewall rules . It's designed to be used for managing network resources in a GCP environment.
 
 
 ## Usage
@@ -21,7 +21,7 @@ This Terraform module provides infrastructure configuration for creating a templ
 To use this module, include it in your Terraform configuration. Below is an example of how to call the template-instance module and its dependencies.
 ### Examples
 
-## Example: instance-from-existing-template
+## Example: _instance-from-existing-template_
 ```hcl
 data "google_compute_instance_template" "generic" {
   name = "template-test-020230919082713685100000001"
@@ -54,6 +54,7 @@ module "instance_template" {
   source_image         = "ubuntu-2204-jammy-v20230908"
   source_image_family  = "ubuntu-2204-lts"
   source_image_project = "ubuntu-os-cloud"
+  disk_size_gb         = "20"
   subnetwork           = module.subnet.subnet_id
   instance_template    = true
   service_account      = null
@@ -111,6 +112,7 @@ Here are the inputs accepted by this module:
 - `source_instance_template`: Link to the instance template.
 - `deletion_protection`: Enable or disable deletion protection.
 - `access_config`: List of access configurations.
+- `enable_public_ip` : Set to `true` to create public ip.
 
 
 ## Module Outputs
@@ -121,13 +123,19 @@ This module provides the following outputs:
 - `subnet_id`: The ID of the created subnet.
 - `firewall_id`: The ID of the created firewall rule.
 - `compute_instance_id`: The ID of the created compute instance.
+- `template_id` : An identifier for the resource with format.
+- `metadata_fingerprint` : The unique fingerprint of the metadata.
+- `template_tags_fingerprint` :The unique fingerprint of the tags.
+- `template_self_link` : The URI of the created resource.
+- `self_link_unique` : A special URI of the created resource that uniquely identifies this instance template with the following format.
+- `instances_self_links` : List of self-links for compute instances
 
 ## Examples
-For detailed examples on how to use this module, please refer to the [examples](https://github.com/cypik/terraform-gcp-template-instance/blob/master/example) directory within this repository.
+For detailed examples on how to use this module, please refer to the [EXAMPLES](https://github.com/cypik/terraform-gcp-template-instance/tree/master/example) directory within this repository.
 
 ## License
-This Terraform module is provided under the '[License Name]' License. Please see the [LICENSE](https://github.com/cypik/terraform-gcp-template-instance/blob/master/LICENSE) file for more details.
+This Terraform module is provided under the **'[License Name]'** License. Please see the [LICENSE](https://github.com/cypik/terraform-gcp-template-instance/blob/master/LICENSE) file for more details.
 
 ## Author
 Your Name
-Replace '[License Name]' and '[Your Name]' with the appropriate license and your information. Feel free to expand this README with additional details or usage instructions as needed for your specific use case.
+Replace **'[License Name]'** and **'[Your Name]'** with the appropriate license and your information. Feel free to expand this README with additional details or usage instructions as needed for your specific use case.

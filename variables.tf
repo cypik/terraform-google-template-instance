@@ -115,7 +115,7 @@ variable "source_image_project" {
 variable "disk_size_gb" {
   description = "Boot disk size in GB"
   type        = string
-  default     = "100"
+  default     = "20"
 }
 
 variable "disk_type" {
@@ -251,15 +251,6 @@ variable "enable_confidential_vm" {
   description = "Whether to enable the Confidential VM configuration on the instance. Note that the instance image must support Confidential VMs. See https://cloud.google.com/compute/docs/images"
 }
 
-#variable "access_config" {
-#  description = "Access configurations, i.e. IPs via which the VM instance can be accessed via the Internet."
-#  type = list(object({
-#    nat_ip       = string
-#    network_tier = string
-#  }))
-#  default = []
-#}
-
 variable "ipv6_access_config" {
   description = "IPv6 access configurations. Currently a max of 1 IPv6 access configuration is supported. If not specified, the instance will have no external IPv6 Internet access."
   type = list(object({
@@ -352,6 +343,7 @@ variable "instance_from_template" {
   default     = false
   description = ""
 }
+
 variable "enable_public_ip" {
   description = "Predefined enable_public_ip  address for the instance."
   type        = bool
