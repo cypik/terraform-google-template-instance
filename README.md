@@ -13,7 +13,7 @@
 
 ## Introduction
 
-This Terraform module provides infrastructure configuration for creating a **template-instance** in Google Cloud Platform (GCP) along with vpc subnets, firewall rules . It's designed to be used for managing network resources in a GCP environment.
+This Terraform module provides infrastructure configuration for creating a Template-Instance in Google Cloud Platform (GCP) along with vpc subnets, firewall rules . It's designed to be used for managing network resources in a GCP environment.
 
 
 ## Usage
@@ -21,7 +21,7 @@ This Terraform module provides infrastructure configuration for creating a **tem
 To use this module, include it in your Terraform configuration. Below is an example of how to call the template-instance module and its dependencies.
 ### Examples
 
-## Example: _instance-from-existing-template_
+## Example: _Instance-From-Existing-Template_
 ```hcl
 data "google_compute_instance_template" "generic" {
   name = "template-test-020230919082713685100000001"
@@ -44,7 +44,7 @@ module "compute_instance" {
 }
 ```
 
-## Example: instance-with-template
+## Example: Instance-With-Template
 ```hcl
 module "instance_template" {
   source               = "git::https://github.com/cypik/terraform-gcp-template-instance.git?ref=v1.0.0"
@@ -131,7 +131,7 @@ This module provides the following outputs:
 - `instances_self_links` : List of self-links for compute instances
 
 ## Examples
-For detailed examples on how to use this module, please refer to the [EXAMPLES](https://github.com/cypik/terraform-gcp-template-instance/tree/master/example) directory within this repository.
+For detailed examples on how to use this module, please refer to the [Examples](https://github.com/cypik/terraform-gcp-template-instance/tree/master/example) directory within this repository.
 
 ## License
 This Terraform module is provided under the **'[License Name]'** License. Please see the [LICENSE](https://github.com/cypik/terraform-gcp-template-instance/blob/master/LICENSE) file for more details.
