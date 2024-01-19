@@ -11,4 +11,3 @@ output "available_zones" {
   description = "List of available zones in region"
   value       = module.compute_instance.available_zones
 }
-
