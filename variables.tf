@@ -335,14 +335,15 @@ variable "service_account_scopes" {
 variable "source_instance_template" {
   type        = string
   default     = ""
-  description = ""
+  description = "The name or path of the instance template to use as the source when creating instances."
 }
 
 variable "instance_from_template" {
   type        = bool
   default     = false
-  description = ""
+  description = "Set to true if instances should be created from the specified instance template, false otherwise."
 }
+
 
 variable "enable_public_ip" {
   description = "Predefined enable_public_ip  address for the instance."
